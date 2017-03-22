@@ -111,7 +111,6 @@ module.exports = class RpcHandler {
   */
   getAlternativeProvider(rpcName, correlationId) {
     const rpcData = this._rpcs[correlationId]
-    let index
 
     if (!rpcData) {
       // RPC was already fufilled somehow. This is prior to 1.1.1 and
@@ -122,7 +121,7 @@ module.exports = class RpcHandler {
     }
 
     const subscribers = Array.from(this._subscriptionRegistry.getLocalSubscribers(rpcName))
-    index = Math.floor(Math.random() * subscribers.length)
+    let index = Math.floor(Math.random() * subscribers.length)
 
     for (let n = 0; n < subscribers.length; ++n) {
       if (!rpcData.providers.has(subscribers[index])) {
@@ -138,7 +137,7 @@ module.exports = class RpcHandler {
 
     const servers = this._subscriptionRegistry.getAllRemoteServers(rpcName)
 
-    index = Math.round(Math.random() * (servers.length - 1))
+    index = Math.round(Math.random() * servers.length)
     for (let n = 0; n < servers.length; ++n) {
       if (!rpcData.servers.has(servers[index])) {
         rpcData.servers.add(servers[index])
@@ -245,7 +244,7 @@ module.exports = class RpcHandler {
     const rpcData = this._rpcs[correlationId]
 
     const servers = this._subscriptionRegistry.getAllRemoteServers(rpcName)
-    const server = servers[Math.round(Math.random() * (servers.length - 1))]
+    const server = servers[Math.round(Math.random() * servers.length)]
 
     if (server) {
       const rpcProxy = new RpcProxy(this._options, C.TOPIC.PRIVATE + server, rpcName, correlationId)
